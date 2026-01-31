@@ -1,0 +1,59 @@
+﻿* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+body 
+{
+    height: 100vh;
+    display: flex;
+   /* background: #060AB2;*/
+}
+
+.memory-game {
+    width: 640px;
+    height: 640px;
+    margin: auto;
+    display: flex; /*По умолчанию ширина элементов уменьшается, чтобы они помещались в контейнер*/
+    flex-wrap: wrap; /*элементы будут располагаться на нескольких строках в соответствии с их размерами*/
+    perspective: 1000px;/*Чтобы создать 3D-эффект переворота*/
+}
+
+.memory-card {
+    width: calc(25% - 10px);
+    height: calc(33.333% - 10px);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    margin: 5px;
+    position: relative;
+    box-shadow: 1px 3px 6px rgba(0,0,0,3);
+    transform: scale(1);
+    transform-style: preserve-3d; /*чтобы поместить их в 3D-пространство, созданное в родителе*/
+    transition: transform .5s;/*чтобы создать эффект движения*/
+}
+
+    .memory-card:active {
+        transform: scale(0.97);
+        transition: transform .2s;
+    }
+
+.front-face,
+.back-face {
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    position: absolute;
+    border-radius: 5px;
+    background: #00BFFF;
+    backface-visibility: hidden;
+}
+
+.memory-card.flip {
+    transform: rotateY(180deg);/*переворачивает карточку на 180 градусов*/
+}
+
+.front-face {
+    transform: rotateY(180deg);
+}
