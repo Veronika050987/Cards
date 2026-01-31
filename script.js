@@ -54,8 +54,12 @@ function flipCard()
 
 function checkForMatch() 
 {
-    let isMatch = firstCard.dataset.name === secondCard.dataset.name;
-    isMatch ? disableCards() : unflipCards();
+    if (firstCard.dataset.framework === secondCard.dataset.framework) {
+      disableCards();
+      return;
+    }
+ 
+    unflipCards();
 }
 
 function disableCards() 
