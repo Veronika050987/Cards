@@ -1,203 +1,177 @@
 ﻿// JavaScript source code
 
-// Получаем аудиоэлемент
-const backgroundMusic = document.getElementById('backgroundMusic');
-const startButton = document.getElementById('startButton');
-const pauseButton = document.getElementById('pauseButton'); // Новый элемент
+document.addEventListener('DOMContentLoaded', function () {
+    const backgroundMusic = document.getElementById('backgroundMusic');
+    const startButton = document.getElementById('startButton');
+    const pauseButton = document.getElementById('pauseButton');
+    const defaultBackgroundImage = 'img/screen2.jpg';
 
-// --- Управление состоянием игры ---
-let isGameRunning = false; // Флаг, запущена ли игра
-let isPaused = false;      // Флаг, поставлена ли игра на паузу
-let flipTimer = null;      // Для хранения ID таймаута unflipCards
+    // --- Управление состоянием игры ---
+    let isGameRunning = false;
+    let isPaused = false;
+    let flipTimer = null;
 
-function playBackgroundMusic() {
-    if (backgroundMusic && !isPaused) {
-        backgroundMusic.play().catch(error => {
-            console.warn("Воспроизведение музыки не удалось:", error);
-        });
+    // Функции фоновой музыки
+    function playBackgroundMusic() {
+        if (backgroundMusic && !isPaused) {
+            backgroundMusic.play().catch(error => {
+                console.warn("Воспроизведение музыки не удалось:", error);
+            });
+        }
     }
-}
 
-function pauseBackgroundMusic() {
-    if (backgroundMusic) {
-        backgroundMusic.pause();
+    function pauseBackgroundMusic() {
+        if (backgroundMusic) {
+            backgroundMusic.pause();
+        }
     }
-}
 
-function setDisplayBackground(imagePath) 
-{
-    const displayDiv = document.body; 
-
-    if (displayDiv) {
-        // Устанавливаем фоновое изображение
-        displayDiv.style.backgroundImage = `url('${imagePath}')`;
-
-        // Настраиваем, как изображение должно отображаться
-        displayDiv.style.backgroundSize = "cover";       // Масштабирует изображение, чтобы оно полностью покрыло контейнер
-        displayDiv.style.backgroundPosition = "center";  // Центрирует изображение
-        displayDiv.style.backgroundRepeat = "no-repeat"; // Запрещает повторение
-
-    }
-    else {
-        console.error("Элемент body не найден.");
-    }
-}
-
-const cards = document.querySelectorAll('.memory-card');
-
-let hasFlippedCard = false;
-let lockBoard = false;
-let firstCard, secondCard;
-
-function flipCard() 
-{
-  if (lockBoard) return;
-  if (this === firstCard) return;
-
-  this.classList.add('flip');
-
-  if (!hasFlippedCard) 
-  {
-     hasFlippedCard = true;
-     firstCard = this;
-     return;
-   }
-
-   secondCard = this;
-   lockBoard = true;
-
-   checkForMatch();
-}
-
-
-function checkForMatch() 
-{
-    if (firstCard.dataset.framework === secondCard.dataset.framework) {
-      disableCards();
-      return;
-    }
- 
-    unflipCards();
-}
-
-function disableCards() 
-{
-    firstCard.removeEventListener('click', flipCard);
-    secondCard.removeEventListener('click', flipCard);
-
-    resetBoard();
-}
- 
-  function unflipCards() 
- {
-    setTimeout(() => {
-      firstCard.classList.remove('flip');
-      secondCard.classList.remove('flip');
-
-      resetBoard();
-    }, 1500);
- }
-
-function resetBoard() 
-{
-    [hasFlippedCard, lockBoard] = [false, false];
-    [firstCard, secondCard] = [null, null];
-  
-}
-function togglePause() {
-    if (!isGameRunning) return; // Нельзя поставить на паузу, если игра не начата
-
-    isPaused = !isPaused;
-
-    if (isPaused) {
-        // 1. PAUSE игры
-        lockBoard = true;
-        // Убедимся, что таймер, который переворачивает карты, тоже остановлен
-        if (flipTimer) clearTimeout(flipTimer);
-
-        // 2. PAUSE музыки
-        pauseBackgroundMusic();
-
-        // 3. Обновление интерфейса
-        pauseButton.textContent = 'RESUME';
-        console.log("Игра поставлена на паузу.");
-
-    } else {
-        // 1. Возобновление игры
-        // При возобновлении мы должны восстановить lockBoard, но только если он был заблокирован из-за несовпадения.
-        // Если lockBoard=true, это значит, что две карты перевернуты и ждут unflipCards. 
-        // Так как мы остановили flipTimer, нужно принудительно сбросить их в unflipCards, чтобы игра продолжилась.
-        if (lockBoard && firstCard && secondCard) {
-            // Если мы ставим на паузу в момент, когда карты ждут сопоставления,
-            // при возобновлении мы просто сбрасываем их, чтобы не зависать.
-            resetBoard();
+    // Установка фона
+    function setDisplayBackground(imagePath) {
+        const displayDiv = document.body;
+        if (displayDiv) {
+            displayDiv.style.backgroundImage = `url('${imagePath}')`;
+            displayDiv.style.backgroundSize = "cover";
+            displayDiv.style.backgroundPosition = "center";
+            displayDiv.style.backgroundRepeat = "no-repeat";
         } else {
-            // Если не было временной блокировки, просто убираем общую блокировку
-            lockBoard = false;
+            console.error("Элемент body не найден.");
+        }
+    }
+
+    // Карточки
+    const cards = document.querySelectorAll('.memory-card');
+    let hasFlippedCard = false;
+    let lockBoard = false;
+    let firstCard, secondCard;
+
+    function flipCard() {
+        if (lockBoard) return;
+        if (this === firstCard) return;
+
+        this.classList.add('flip');
+
+        if (!hasFlippedCard) {
+            hasFlippedCard = true;
+            firstCard = this;
+            return;
         }
 
-        // 2. Возобновление музыки
-        playBackgroundMusic();
+        secondCard = this;
+        lockBoard = true;
 
-        // 3. Обновление интерфейса
-        pauseButton.textContent = 'PAUSE';
-        console.log("Игра возобновлена.");
+        checkForMatch();
     }
-}
-function initializeGame() {
-    // Сброс состояния перед стартом
-    isGameRunning = true;
-    isPaused = false;
-    startButton.disabled = true;
-    startButton.textContent = 'GAME STARTED';
-    pauseButton.disabled = false;
-    pauseButton.textContent = 'PAUSE';
 
-    // Перемешивание и сброс карточек
-    cards.forEach(card => {
-        let ramdomPos = Math.floor(Math.random() * 12);
-        card.style.order = ramdomPos;
-        card.classList.remove('flip');
-        card.removeEventListener('click', flipCard); // Удаляем старые слушатели, если были
-        card.addEventListener('click', flipCard);
-    });
+    function checkForMatch() {
+        if (firstCard.dataset.framework === secondCard.dataset.framework) {
+            displayLogoInfo(firstCard.dataset.framework);
+            disableCards();
+            return;
+        }
+        unflipCards();
+    }
 
-    // Запуск музыки
-    playBackgroundMusic();
-}
+    const logoDatabase = {
+        citroen: { name: "Citroën", logo_path: "img/citroen.svg", history: "Citroën (Ситроен) была основана Андре Ситроеном в 1919 году. Компания известна своими инновациями, такими как передний привод и гидропневматическая подвеска. Двойные шевроны в логотипе символизируют зубчатые колеса, которые Ситроен производил до основания автомобильной компании." },
+        mitsubishi: { name: "Mitsubishi", logo_path: "img/mitsubishi.svg", history: "Mitsubishi (Мицубиси) в переводе означает три алмаза. Это конгломерат, основанный в 1870 году. Логотип состоит из трех ромбов, символизирующих три принципа компании: надежность, честность и ответственность." },
+        opel: { name: "Opel", logo_path: "img/opel.svg", history: "Opel (Опель) — немецкий автопроизводитель, основанный в 1862 году. Изначально компания производила швейные машины. Логотип с молнией (Blitz) появился в 1930-х годах и символизирует скорость." },
+        peugeot: { name: "Peugeot", logo_path: "img/peugeot.svg", history: "Peugeot (Пежо) — старейшая автомобильная марка в мире, основанная в 1810 году. Лев на логотипе символизирует силу и качество, а также отражает регион Франш-Конте, откуда родом основатели компании." },
+        renault: { name: "Renault", logo_path: "img/renault.svg", history: "Renault (Рено) была основана Луи Рено в 1899 году. Знаменитый ромб появился в 1925 году. Современный логотип был представлен в 1992 году и символизирует движение вперед." },
+        toyota: { name: "Toyota", logo_path: "img/toyota.svg", history: "Toyota (Тойота) основана Киичиро Тоёдой. Логотип, состоящий из трех эллипсов, символизирует слияние сердец клиентов, продуктов и технологического прогресса компании." }
+    };
 
+    // Модальное окно инфо (модель предполагает наличие элементов)
+    function displayLogoInfo(framework) {
+        const modal = document.getElementById('infoModal');
+        if (!modal) return;
+        const logoName = document.getElementById('logoName');
+        const logoImage = document.getElementById('logoImage');
+        const logoHistory = document.getElementById('logoHistory');
+        const info = logoDatabase[framework];
 
-document.addEventListener('DOMContentLoaded', function () {
-    const defaultBackgroundImage = 'img/screen2.jpg';
+        if (info) {
+            logoName.textContent = info.name;
+            logoImage.src = info.logo_path;
+            logoHistory.textContent = info.history;
+            modal.style.display = "block";
+        }
+    }
+
+    function disableCards() {
+        firstCard.removeEventListener('click', flipCard);
+        secondCard.removeEventListener('click', flipCard);
+        resetBoard();
+    }
+
+    function unflipCards() {
+        setTimeout(() => {
+            firstCard.classList.remove('flip');
+            secondCard.classList.remove('flip');
+            resetBoard();
+        }, 1500);
+    }
+
+    function resetBoard() {
+        [hasFlippedCard, lockBoard] = [false, false];
+        [firstCard, secondCard] = [null, null];
+        // Привязать обработчики снова, если нужно
+    }
+
+    // Панель управления:Start/Pause
+    function togglePause() {
+        if (!isGameRunning) return;
+        isPaused = !isPaused;
+
+        if (isPaused) {
+            lockBoard = true;
+            if (flipTimer) clearTimeout(flipTimer);
+            pauseBackgroundMusic();
+            pauseButton.textContent = 'RESUME';
+            console.log("Игра поставлена на паузу.");
+        } else {
+            if (lockBoard && firstCard && secondCard) {
+                resetBoard();
+            } else {
+                lockBoard = false;
+            }
+            playBackgroundMusic();
+            pauseButton.textContent = 'PAUSE';
+            console.log("Игра возобновлена.");
+        }
+    }
+
+    function initializeGame() {
+        isGameRunning = true;
+        isPaused = false;
+        startButton.disabled = true;
+        startButton.textContent = 'GAME STARTED';
+        pauseButton.disabled = false;
+        pauseButton.textContent = 'PAUSE';
+
+        cards.forEach(card => {
+            let ramdomPos = Math.floor(Math.random() * 12);
+            card.style.order = ramdomPos;
+            card.classList.remove('flip');
+            card.removeEventListener('click', flipCard);
+            card.addEventListener('click', flipCard);
+        });
+
+        playBackgroundMusic();
+    }
+
+    // Установка фона по умолчанию
     setDisplayBackground(defaultBackgroundImage);
 
-    // Изначально привязываем функцию инициализации к кнопке
+    // Привязка кнопок
     startButton.addEventListener('click', initializeGame);
     pauseButton.addEventListener('click', togglePause);
 
-    // Сбросим состояние карточек перед первым запуском
+    // Изначально сброс состояния карточек
     cards.forEach(card => {
-        // Убедимся, что они не были перевернуты ранее
         card.classList.remove('flip');
     });
-})();
 
-
-//(function shuffle() {
-//    cards.forEach(card => {
-//      let ramdomPos = Math.floor(Math.random() * 12);
-//      card.style.order = ramdomPos;
-//    });
-//  })();
-
-//cards.forEach(card => card.addEventListener('click', flipCard));
-
-
-//const defaultBackgroundImage = 'img/screen2.jpg';
-
-//document.addEventListener('DOMContentLoaded', function () {
-//    // Устанавливаем фон при загрузке DOM
-//    setDisplayBackground(defaultBackgroundImage);
-
-//    playBackgroundMusic();
-//});
+    // Прегрузка обработчиков кликов на карточках
+    // Важно: убедитесь, что у карточек есть data-framework и класс memory-card
+});
