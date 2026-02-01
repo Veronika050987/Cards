@@ -50,67 +50,6 @@ button:disabled {
         box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.5);
     }
 
-/*.round-button {
-    background: linear-gradient(145deg, #dc143c, #a0002d);*/ /* Красный цвет фона */
-    /*color: #FFD700;*/ /* Цвет текста */
-    /*font-weight: bold;
-    border: none;*/ /* Убрать границу */
-    /*border-radius: 50%;*/ /* Круглая форма */
-    /*width: 100px;*/ /* Ширина кнопки */
-    /*height: 100px;*/ /* Высота кнопки */
-    /*font-size: 16px;*/ /* Размер шрифта */
-    /*cursor: pointer;*/ /* Курсор при наведении */
-    /*display: flex;*/ /* Используем flexbox для центрирования текста */
-    /*align-items: center;*/ /* Центрируем по вертикали */
-    /*justify-content: center;*/ /* Центрируем по горизонтали */
-    /*box-shadow: 0px 4px 15px rgba(255, 255, 0, 0.5),*/ /* Основная тень */
-    /*inset 0px 4px 10px rgba(255, 255, 0, 0.3);*/ /* Внутренняя тень для объема */
-    /*transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;*/ /* Плавные переходы */
-/*}
-
-    .round-button:hover {
-        background-color: #FFA500;*/ /* Цвет кнопки при наведении */
-        /*transform: translateY(-5px);*/ /* Эффект поднятия при наведении */
-        /*box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.5);*/ /* Увеличенная тень при наведении */
-    /*}
-
-.round-button {
-    margin-left: 40px;*/ /* Отступ от левого края */
-    /*margin-top: 300px;*/ /* Отступ от левого края */
-
-/*}
-
-
-.round-button-2 {
-    background: linear-gradient(145deg, #dc143c, #a0002d);*/ /* Красный цвет фона */
-    /*color: #FFD700;*/ /* Цвет текста */
-    /*font-weight: bold;
-    border: none;*/ /* Убрать границу */
-    /*border-radius: 50%;*/ /* Круглая форма */
-    /*width: 100px;*/ /* Ширина кнопки */
-    /*height: 100px;*/ /* Высота кнопки */
-    /*font-size: 16px;*/ /* Размер шрифта */
-    /*cursor: pointer;*/ /* Курсор при наведении */
-    /*display: flex;*/ /* Используем flexbox для центрирования текста */
-    /*align-items: center;*/ /* Центрируем по вертикали */
-    /*justify-content: center;*/ /* Центрируем по горизонтали */
-    /*box-shadow: 0px 4px 15px rgba(255, 255, 0, 0.5),*/ /* Основная тень */
-    /*inset 0px 4px 10px rgba(255, 255, 0, 0.3);*/ /* Внутренняя тень для объема */
-    /*transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;*/ /* Плавные переходы */
-/*}
-
-    .round-button-2:hover {
-        background-color: #FFA500;*/ /* Цвет кнопки при наведении */
-        /*transform: translateY(-5px);*/ /* Эффект поднятия при наведении */
-        /*box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.5);*/ /* Увеличенная тень при наведении */
-    /*}
-
-.round-button-2 {
-    margin-left: 40px;*/ /* Отступ от левого края */
-    /*margin-top: 500px;*/ /* Отступ от левого края */
-/*}*/
-
-
 .memory-game {
     width: 660px;
     height: 640px;
